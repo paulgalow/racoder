@@ -29,10 +29,14 @@ primary_region = "ams"
   #[[services.ports]]
   #  handlers = ["tls", "http"]
   #  port = 443
-  [[services.tcp_checks]]
-    grace_period = "10s"
-    interval = "15s"
-    timeout = "10s"
+  [[services.http_checks]]
+    interval = 30000
+    grace_period = "5s"
+    method = "get"
+    path = "/healthcheck"
+    protocol = "http"
+    timeout = 5000
+    tls_skip_verify = false
 
 [env]
   HTTP_PORT = 3000
