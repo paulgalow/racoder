@@ -1,0 +1,40 @@
+# fly.toml app configuration file generated for racoder on 2023-06-18T12:26:44+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "racoder"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[deploy]
+  strategy = "immediate"
+
+[[services]]
+  internal_port = 3000
+  protocol = "tcp"
+  auto_stop_machines = false
+  auto_start_machines = false
+  min_machines_running = 1
+  [services.concurrency]
+    type = "connections"
+    soft_limit = 10
+    hard_limit = 20
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+    force_https = false
+  #[[services.ports]]
+  #  handlers = ["tls", "http"]
+  #  port = 443
+  [[services.tcp_checks]]
+    grace_period = "10s"
+    interval = "15s"
+    timeout = "10s"
+
+[env]
+  HTTP_PORT = 3000
+  # See: https://en.everybodywiki.com/List_of_BBC_radio_stream_URLs
+  INPUT_STREAM = 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_radio_four_extra.m3u8'
