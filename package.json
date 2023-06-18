@@ -1,10 +1,11 @@
 {
   "name": "racoder",
   "version": "1.0.0",
-  "description": "",
+  "description": "Transcode internet radio streams to MP3 streams",
   "main": "server.js",
   "scripts": {
-    "start": "node ./src/server.js"
+    "start": "node ./src/server.js",
+    "build": "docker build --platform linux/amd64 -t $npm_package_name ."
   },
   "keywords": [],
   "author": "",
