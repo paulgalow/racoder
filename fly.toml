@@ -30,7 +30,7 @@ primary_region = "ams"
   #  handlers = ["tls", "http"]
   #  port = 443
   [[services.http_checks]]
-    interval = 30000
+    interval = 60000
     grace_period = "5s"
     method = "get"
     path = "/healthcheck"

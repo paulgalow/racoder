@@ -60,7 +60,7 @@ function handleBbcRadio4Extra(req, res) {
 }
 
 function handleHealthcheck(req, res) {
-  log("Healthcheck probed");
+  // log("Healthcheck probed");
   res.writeHead(200);
   res.end();
 }
