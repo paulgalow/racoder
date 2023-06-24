@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node ./src/server.js",
-    "build": "docker build --platform linux/amd64 -t $npm_package_name ."
+    "build": "docker build --platform linux/amd64 -t $npm_package_name .",
+    "deploy": "fly deploy"
   },
   "keywords": [],
   "author": "",
