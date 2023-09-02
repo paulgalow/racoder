@@ -2,9 +2,9 @@ import http from "node:http";
 import { spawn } from "node:child_process";
 import { log } from "./utils.js";
 
-const { HTTP_PORT, INPUT_STREAM } = process.env;
+const { HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = process.env;
 
-function handleBbcRadio4Extra(req, res) {
+function handleStream(req, res) {
   log(`Incoming request for URL '${req.url}' with method '${req.method}'`);
   log(`Incoming request headers: ${req.rawHeaders}`);
   res.writeHead(200, { "Content-Type": "audio/mpeg" });
@@ -74,8 +74,8 @@ const server = http.createServer(
   { keepAlive: true, keepAliveInitialDelay: 5000 },
   (req, res) => {
     switch (req.url) {
-      case "/bbc-radio-4-extra":
-        handleBbcRadio4Extra(req, res);
+      case OUTPUT_PATH:
+        handleStream(req, res);
         break;
       case "/healthcheck":
         handleHealthcheck(req, res);
