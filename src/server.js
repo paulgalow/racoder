@@ -33,7 +33,7 @@ function handleBbcRadio4Extra(req, res) {
     console.log(`stdout: ${data}`);
   });
 
-  ffmpegProcess.on("data", () => {
+  ffmpegProcess.on("data", (error) => {
     log(
       `FFmpeg process with PID '${ffmpegProcess.pid} encountered an error: ${error}`
     );
