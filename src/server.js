@@ -1,8 +1,8 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
-import { log } from "./utils.js";
+import { getTimeZone, log } from "./utils.js";
 
-const { HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = process.env;
+const { BITRATE, HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = process.env;
 
 function handleStream(req, res) {
   log(`Incoming request for URL '${req.url}' with method '${req.method}'`);
@@ -20,7 +20,7 @@ function handleStream(req, res) {
     "-c:a",
     "libmp3lame",
     "-b:a",
-    "128k",
+    BITRATE,
     "-f",
     "mp3",
     "pipe:1",
@@ -70,6 +70,17 @@ function handleNotFound(req, res) {
   res.end();
 }
 
+function gracefulShutdown(signal) {
+  log(`${signal} received. Stopping server …`);
+  server.close(() => {
+    process.exit(0);
+  });
+  setTimeout(() => {
+    log("Timeout reached. Shutting down server now …");
+    process.exit(1);
+  }, 5000);
+}
+
 const server = http.createServer(
   { keepAlive: true, keepAliveInitialDelay: 5000 },
   (req, res) => {
@@ -87,15 +98,9 @@ const server = http.createServer(
   }
 );
 
+log(`Server timezone: ${getTimeZone()}`);
 server.listen(HTTP_PORT ?? 3000);
-console.log(`Server listening on port ${HTTP_PORT ?? 3000} …`);
+log(`Server listening on port ${HTTP_PORT ?? 3000} …`);
 
-process.on("SIGINT", async () => {
-  log("Stopping server …");
-  server.close(() => {
-    process.exit(0);
-  });
-  setTimeout(() => {
-    process.exit(1);
-  }, 10000);
-});
+process.on("SIGINT", (signal) => gracefulShutdown(signal));
+process.on("SIGTERM", (signal) => gracefulShutdown(signal));
