@@ -30,7 +30,7 @@ function handleStream(req, res) {
   log(`Spawned FFmpeg process with PID '${ffmpegProcess.pid}'`);
 
   ffmpegProcess.stderr.on("data", (data) => {
-    console.log(`stdout: ${data}`);
+    log(`stdout: ${data}`);
   });
 
   ffmpegProcess.on("data", (error) => {
