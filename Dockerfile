@@ -4,7 +4,7 @@ FROM public.ecr.aws/docker/library/node:lts-alpine
 WORKDIR /app
 
 # Install FFmpeg
-RUN apk add --no-cache ffmpeg
+RUN apk add --no-cache ffmpeg tzdata
 
 COPY . .
 
