@@ -9,7 +9,7 @@
     "deploy": "fly deploy"
   },
   "keywords": [],
-  "author": "",
+  "author": "Paul Galow",
   "license": "ISC",
   "type": "module"
 }
