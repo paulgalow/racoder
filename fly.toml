@@ -43,3 +43,5 @@ primary_region = "ams"
   # See: https://en.everybodywiki.com/List_of_BBC_radio_stream_URLs
   INPUT_STREAM = 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_radio_four_extra.m3u8'
   OUTPUT_PATH = '/bbc-radio-4-extra'
+  BITRATE = '128k'
+  TZ = 'Europe/Berlin'
