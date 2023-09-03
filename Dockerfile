@@ -3,13 +3,14 @@ FROM public.ecr.aws/docker/library/node:lts-alpine
 
 WORKDIR /app
 
-# Install FFmpeg
+# Install FFmpeg and tzdata for time zone support
 RUN apk add --no-cache ffmpeg tzdata
 
-COPY . .
+COPY ./src .
+COPY package.json .
 
 EXPOSE 3000
 
 USER node
 
-CMD ["node", "./src/server.js"]
+CMD ["node", "server.js"]
