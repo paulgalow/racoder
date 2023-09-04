@@ -1,5 +1,7 @@
 name: Publish Docker image
 
+# Push to main will create an image named "paulgalow/racoder:main"
+# Tagging a release 'vX' will create an image named "paulgalow/racoder:'vX'" and one for ':latest'
 on:
   push:
     branches:
