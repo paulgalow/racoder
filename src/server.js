@@ -86,6 +86,7 @@ const server = http.createServer(
   (req, res) => {
     switch (req.url) {
       case OUTPUT_PATH:
+      case OUTPUT_PATH + "/":
         handleStream(req, res);
         break;
       case "/healthcheck":
