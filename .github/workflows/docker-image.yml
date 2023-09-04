@@ -9,8 +9,6 @@ on:
   pull_request:
     branches:
       - "main"
-  release:
-    types: [published]
 
 jobs:
   push_to_registries:
@@ -43,8 +41,6 @@ jobs:
           images: |
             paulgalow/racoder
             ghcr.io/${{ github.repository }}
-          tags: |
-            type=semver,pattern={{version}}
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v4
