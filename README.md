@@ -8,6 +8,15 @@ Racoder is a simple Node.js web server using [FFmpeg](https://ffmpeg.org/) to tr
 - Play HLS and MPEG-DASH streams on devices that don't support those protocols
 - Transcode live video streams into audio only versions
 
+## Design goals and trade-offs
+
+- Minimize server requirements
+  - Racoder runs on 256 MB of RAM and consumes very little CPU
+- Minimize traffic volume
+  - Racoder will only pull from an upstream source during the time a stream is requested
+- Aimed at small (private) deployments
+  - Each request spawns a separate instance of FFmpeg which consumes additional memory (approx. 17-20 MB of RAM per active stream) and network bandwidth
+
 ## How to deploy
 
 ### Using Docker Run
