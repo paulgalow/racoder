@@ -1,9 +1,8 @@
 services:
-  application:
-    read_only: true
-    container_name: racoder
+  racoder:
     build: .
     image: paulgalow/racoder
+    container_name: racoder
     restart: unless-stopped
     ports:
       - "3000:3000/tcp"
@@ -14,6 +13,7 @@ services:
       BITRATE: 128k
       TZ: Europe/Berlin
       LOG_LEVEL: DEBUG
+    read_only: true
     cap_drop:
       - ALL
 
