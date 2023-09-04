@@ -1,15 +1,12 @@
 {
   "name": "racoder",
-  "version": "1.0.0",
   "description": "Transcode internet radio streams to MP3 streams",
-  "main": "server.js",
+  "main": "./src/server.js",
   "scripts": {
     "start": "docker compose up",
     "build": "docker compose build",
     "deploy": "fly deploy"
   },
-  "keywords": [],
-  "author": "Paul Galow",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module"
 }
