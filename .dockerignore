@@ -9,5 +9,6 @@
 **/.editorconfig
 **/.aws
 **/dist
+**/.DS_Store
 docker-compose.yml
 Dockerfile
