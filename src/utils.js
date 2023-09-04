@@ -63,7 +63,10 @@ export function validateEnv() {
   }
 
   if (process.env.HTTP_PORT == null) {
-    log("'HTTP_PORT' environment variable is not set. Setting to '3000' …");
+    log(
+      "'HTTP_PORT' environment variable is not set. Setting to '3000' …",
+      LOG_LEVELS.DEBUG
+    );
     process.env.HTTP_PORT = "3000";
   }
 
