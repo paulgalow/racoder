@@ -1,12 +1,12 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
-import { getTimeZone, log, validateEnv } from "./utils.js";
+import { getTimeZone, log, LOG_LEVELS, validateEnv } from "./utils.js";
 
 const { BITRATE, HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = validateEnv();
 
 function handleStream(req, res) {
   log(`Incoming request for URL '${req.url}' with method '${req.method}'`);
-  log(`Incoming request headers: ${req.rawHeaders}`);
+  log(`Incoming request headers: ${req.rawHeaders}`, LOG_LEVELS.DEBUG);
   res.writeHead(200, { "Content-Type": "audio/mpeg" });
 
   const ffmpegProcess = spawn("ffmpeg", [
@@ -30,7 +30,7 @@ function handleStream(req, res) {
   log(`Spawned FFmpeg process with PID '${ffmpegProcess.pid}'`);
 
   ffmpegProcess.stderr.on("data", (data) => {
-    log(`stdout: ${data}`);
+    log(`stdout: ${data}`, LOG_LEVELS.DEBUG);
   });
 
   ffmpegProcess.on("data", (error) => {
@@ -53,7 +53,10 @@ function handleStream(req, res) {
   });
 
   req.on("close", () => {
-    log(`Quitting FFmpeg process with PID '${ffmpegProcess.pid}' …`);
+    log(
+      `Quitting FFmpeg process with PID '${ffmpegProcess.pid}' …`,
+      LOG_LEVELS.DEBUG
+    );
     ffmpegProcess.kill();
   });
 }

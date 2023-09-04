@@ -1,4 +1,11 @@
-export function log(message) {
+export const LOG_LEVELS = {
+  DEBUG: "DEBUG",
+  INFO: "INFO",
+  WARN: "WARN",
+  ERROR: "ERROR",
+};
+
+export function log(message, logLevel = LOG_LEVELS.INFO) {
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -7,7 +14,15 @@ export function log(message) {
   const minutes = String(now.getMinutes()).padStart(2, "0");
   const seconds = String(now.getSeconds()).padStart(2, "0");
   const dateTimeStamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  console.log(`${dateTimeStamp} - ${message}`);
+
+  if (logLevel === "INFO") {
+    console.log(`${dateTimeStamp} - ${message}`);
+    return;
+  }
+
+  if (logLevel === process.env.LOG_LEVEL) {
+    console.debug(`${dateTimeStamp} - 🪲 ${message}`);
+  }
 }
 
 export function getTimeZone() {
@@ -18,6 +33,10 @@ export function getTimeZone() {
 }
 
 export function validateEnv() {
+  if (process.env.LOG_LEVEL == null) {
+    process.env.LOG_LEVEL = "INFO";
+  }
+
   if (process.env.INPUT_STREAM == null) {
     throw new Error("'INPUT_STREAM' environment variable is not set.");
   }
