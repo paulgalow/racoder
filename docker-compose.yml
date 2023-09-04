@@ -6,7 +6,7 @@ services:
     image: paulgalow/racoder
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3000:3000/tcp"
     environment:
       # See: https://en.everybodywiki.com/List_of_BBC_radio_stream_URLs
       INPUT_STREAM: 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_radio_four_extra.m3u8'
