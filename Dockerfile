@@ -1,4 +1,6 @@
-# https://gallery.ecr.aws/docker/library/node
+# syntax=docker/dockerfile:1
+
+# See https://gallery.ecr.aws/docker/library/node
 FROM public.ecr.aws/docker/library/node:lts-alpine
 
 ENV NODE_ENV=production
@@ -9,8 +11,8 @@ RUN apk add --no-cache ffmpeg tzdata && \
   rm -rf /tmp/* /var/cache/apk/*
 
 WORKDIR /app
-COPY --chown=node:node ./src .
 COPY --chown=node:node package.json .
+COPY --chown=node:node ./src .
 
 EXPOSE $HTTP_PORT
 
