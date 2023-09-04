@@ -62,7 +62,7 @@ function handleStream(req, res) {
 }
 
 function handleHealthcheck(req, res) {
-  // log("Healthcheck probed");
+  log("Healthcheck probed", LOG_LEVELS.DEBUG);
   res.writeHead(200);
   res.end();
 }
