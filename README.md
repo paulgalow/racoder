@@ -1,6 +1,12 @@
 # racoder 📻
 
-Racoder is a simple Node.js web server using FFmpeg to transcode internet radio/video streams to MP3 streams. Supported input stream formats are HLS, MPEG-DASH, RTMP, basically anything FFmpeg can handle.
+Racoder is a simple Node.js web server using [FFmpeg](https://ffmpeg.org/) to transcode internet radio/video streams to MP3 streams. Supported input stream formats are HLS, MPEG-DASH, RTMP, basically anything FFmpeg can handle.
+
+## Use cases
+
+- Stream Internet radio streams using different audio codecs (like AAC) to devices that only support MP3 playback
+- Play HLS and MPEG-DASH streams on devices that don't support those protocols
+- Transcode live video streams into audio only versions
 
 ## How to deploy
 
