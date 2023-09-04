@@ -22,6 +22,18 @@ Racoder is a simple Node.js web server using [FFmpeg](https://ffmpeg.org/) to tr
 - Aimed at small (private) deployments
   - Each request spawns a separate instance of FFmpeg which consumes additional memory (approx. 17-20 MB of RAM per active stream) and network bandwidth
 
+## Configuration options
+
+Configuration options are set using environment variables.
+
+| Name         | Description                               | Default value | Example                                                                             |
+| ------------ | ----------------------------------------- | ------------- | ----------------------------------------------------------------------------------- |
+| INPUT_STREAM | ℹ️ Required. URL for incoming stream      | N/A           | `https://artesimulcast.akamaized.net/hls/live/2030993/artelive_de/master_v180.m3u8` |
+| BITRATE      | Transcoding bitrate for output MP3 stream | `128k`        | `320k`                                                                              |
+| LOG_LEVEL    | Level of detail for log output            | `INFO`        | `DEBUG`                                                                             |
+| OUTPUT_PATH  | URL path for output MP3 stream            | `/`           | `/my-station`                                                                       |
+| TZ           | Timezone for log timestamps               | `UTC`         | `Europe/Berlin`                                                                     |
+
 ## How to deploy
 
 ### Using Docker Run
