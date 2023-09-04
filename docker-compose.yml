@@ -13,6 +13,7 @@ services:
       OUTPUT_PATH: '/bbc-radio-4-extra'
       BITRATE: 128k
       TZ: Europe/Berlin
+      LOG_LEVEL: DEBUG
     cap_drop:
       - ALL
 
