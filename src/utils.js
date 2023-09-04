@@ -1,8 +1,6 @@
 export const LOG_LEVELS = {
   DEBUG: "DEBUG",
   INFO: "INFO",
-  WARN: "WARN",
-  ERROR: "ERROR",
 };
 
 export function log(message, logLevel = LOG_LEVELS.INFO) {
@@ -15,7 +13,7 @@ export function log(message, logLevel = LOG_LEVELS.INFO) {
   const seconds = String(now.getSeconds()).padStart(2, "0");
   const dateTimeStamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-  if (logLevel === "INFO") {
+  if (logLevel === LOG_LEVELS.INFO) {
     console.log(`${dateTimeStamp} - ${message}`);
     return;
   }
