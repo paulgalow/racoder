@@ -1,8 +1,8 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
-import { getTimeZone, log } from "./utils.js";
+import { getTimeZone, log, validateEnv } from "./utils.js";
 
-const { BITRATE, HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = process.env;
+const { BITRATE, HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = validateEnv();
 
 function handleStream(req, res) {
   log(`Incoming request for URL '${req.url}' with method '${req.method}'`);
@@ -99,8 +99,9 @@ const server = http.createServer(
 );
 
 log(`Server timezone: ${getTimeZone()}`);
-server.listen(HTTP_PORT ?? 3000);
-log(`Server listening on port ${HTTP_PORT ?? 3000} …`);
+server.listen(HTTP_PORT);
+log(`Server listening on TCP port ${HTTP_PORT} …`);
+log(`Stream available at '${OUTPUT_PATH}'`);
 
 process.on("SIGINT", (signal) => gracefulShutdown(signal));
 process.on("SIGTERM", (signal) => gracefulShutdown(signal));

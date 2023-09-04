@@ -16,3 +16,37 @@ export function getTimeZone() {
     .formatToParts(now)
     .find((part) => part.type === "timeZoneName").value;
 }
+
+export function validateEnv() {
+  if (process.env.INPUT_STREAM == null) {
+    throw new Error("'INPUT_STREAM' environment variable is not set.");
+  }
+
+  try {
+    new URL(process.env.INPUT_STREAM);
+  } catch (error) {
+    throw new Error("'INPUT_STREAM' environment variable is not a valid URL.");
+  }
+
+  if (process.env.OUTPUT_PATH == null) {
+    log("'OUTPUT_PATH' environment variable is not set. Defaulting to '/' …");
+    process.env.OUTPUT_PATH = "/";
+  }
+
+  if (process.env.BITRATE == null) {
+    log("'BITRATE' environment variable is not set. Defaulting to '128k' …");
+    process.env.BITRATE = "128k";
+  }
+
+  if (process.env.TZ == null) {
+    log("'TZ' environment variable is not set. Defaulting to 'UTC' …");
+    process.env.TZ = "UTC";
+  }
+
+  if (process.env.HTTP_PORT == null) {
+    log("'HTTP_PORT' environment variable is not set. Setting to '3000' …");
+    process.env.HTTP_PORT = "3000";
+  }
+
+  return process.env;
+}
