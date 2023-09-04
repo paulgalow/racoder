@@ -1,6 +1,6 @@
 services:
   racoder:
-    image: paulgalow/racoder
+    image: paulgalow/racoder:latest
     container_name: racoder
     ports:
       - "3000:3000/tcp"
