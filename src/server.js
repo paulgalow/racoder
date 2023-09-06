@@ -93,6 +93,7 @@ const server = http.createServer(
         handleStream(req, res);
         break;
       case "/healthcheck":
+      case "/healthcheck/":
         handleHealthcheck(req, res);
         break;
       default:
