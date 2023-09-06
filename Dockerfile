@@ -19,6 +19,6 @@ EXPOSE $HTTP_PORT
 USER node
 
 HEALTHCHECK \
-  CMD wget -q --spider http://localhost:${HTTP_PORT}/healthcheck || exit 1
+  CMD wget -S --spider http://localhost:${HTTP_PORT}/healthcheck || exit 1
 
 CMD ["node", "server.js"]
