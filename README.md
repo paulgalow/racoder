@@ -43,9 +43,11 @@ Let's use a simple example and deploy an instance of racoder on our local client
 ```sh
 docker run \
   --rm \
+  --read-only \
+  --cap-drop ALL \
   --name racoder \
-  -e INPUT_STREAM="https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_radio_four_extra.m3u8" \
-  -p 3000:3000/tcp \
+  --publish 3000:3000/tcp \
+  --env INPUT_STREAM="https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_radio_four_extra.m3u8" \
   paulgalow/racoder:latest
 ```
 
