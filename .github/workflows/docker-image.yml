@@ -102,4 +102,4 @@ jobs:
             https://hub.docker.com/v2/repositories/paulgalow/racoder/
 
         env:
-          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
