@@ -40,6 +40,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Determine "latest" tag conditionally
+        id: latest_tag
+        run: echo "LATEST_TAG=$(if [[ '${{ github.ref }}' == refs/tags/v* ]]; then echo 'latest'; else echo ''; fi)" >> $GITHUB_ENV
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
@@ -47,6 +51,8 @@ jobs:
           images: |
             paulgalow/racoder
             ghcr.io/${{ github.repository }}
+          flavor: |
+            latest=${{ env.LATEST_TAG }}
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v4
