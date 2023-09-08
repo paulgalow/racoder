@@ -40,25 +40,42 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Determine "latest" tag conditionally
-        id: latest_tag
-        run: echo "LATEST_TAG=$(if [[ '${{ github.ref }}' == refs/tags/v* ]]; then echo 'latest'; else echo ''; fi)" >> $GITHUB_ENV
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
+      - name: Extract metadata (tags, labels) for Docker (versioned tags)
+        if: startsWith(github.ref, 'refs/tags/v')
+        id: meta_versioned
         uses: docker/metadata-action@v4
         with:
           images: |
             paulgalow/racoder
             ghcr.io/${{ github.repository }}
           flavor: |
-            latest=${{ env.LATEST_TAG }}
+            latest=true
 
-      - name: Build and push Docker images
+      - name: Extract metadata (tags, labels) for Docker (non-versioned tags)
+        if: "!startsWith(github.ref, 'refs/tags/v')"
+        id: meta_non_versioned
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            paulgalow/racoder
+            ghcr.io/${{ github.repository }}
+
+      - name: Build and push Docker images (versioned tags)
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: docker/build-push-action@v4
         with:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta_versioned.outputs.tags }}
+          labels: ${{ steps.meta_versioned.outputs.labels }}
+
+      - name: Build and push Docker images (non-versioned tags)
+        if: "!startsWith(github.ref, 'refs/tags/v')"
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm
+          push: true
+          tags: ${{ steps.meta_non_versioned.outputs.tags }}
+          labels: ${{ steps.meta_non_versioned.outputs.labels }}
