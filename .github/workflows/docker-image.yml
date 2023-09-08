@@ -59,6 +59,8 @@ jobs:
           images: |
             paulgalow/racoder
             ghcr.io/${{ github.repository }}
+          flavor: |
+            latest=false
 
       - name: Build and push Docker images (versioned tags)
         if: startsWith(github.ref, 'refs/tags/v')
