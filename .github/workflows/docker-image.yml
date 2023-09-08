@@ -81,3 +81,25 @@ jobs:
           push: true
           tags: ${{ steps.meta_non_versioned.outputs.tags }}
           labels: ${{ steps.meta_non_versioned.outputs.labels }}
+
+      - name: Sync GitHub meta-data to Docker Hub
+        run: |
+          # Fetch the GitHub repository description and README.md content
+          REPO_DESCRIPTION=$(jq -r '.description' <(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}))
+          README_CONTENT=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/readme | jq -r '.content' | base64 --decode)
+
+          # Prepare the payload for Docker Hub API
+          PAYLOAD=$(jq -n \
+            --arg description "$REPO_DESCRIPTION" \
+            --arg readme "$README_CONTENT" \
+            '{description: $description, full_description: $readme}')
+
+          # Update Docker Hub repository description and README
+          curl -s -X PATCH \
+            -H "Authorization: JWT ${{ secrets.DOCKER_ACCESS_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            https://hub.docker.com/v2/repositories/paulgalow/racoder/
+
+        env:
+          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
