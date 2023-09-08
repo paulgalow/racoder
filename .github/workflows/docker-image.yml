@@ -1,16 +1,14 @@
 name: Publish Docker image
 
-# Push to main will create an image named "paulgalow/racoder:main"
-# Tagging a release 'vX' will create an image named "paulgalow/racoder:'vX'" and one for ':latest'
+# Tagging a release 'vX' will create an image named "paulgalow/racoder:vX" and one for ":latest"
+# Tagging a release with 'unstable' will create an image named "paulgalow/racoder:unstable"
 on:
   push:
-    branches:
-      - "main"
     tags:
-      - "v*"
+      - "*"
   pull_request:
-    branches:
-      - "main"
+    tags:
+      - "*"
 
 jobs:
   push_to_registries:
