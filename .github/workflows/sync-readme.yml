@@ -1,0 +1,47 @@
+name: Sync README and Description to Docker Hub
+
+on:
+  push:
+    paths:
+      - "README.md"
+
+jobs:
+  sync_metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Fetch README content
+        run: |
+          README_CONTENT=$(cat README.md)
+
+      - name: Fetch GitHub repository description
+        id: repo_description
+        run: |
+          REPO_DESCRIPTION=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }} | jq -r '.description')
+          echo "REPO_DESCRIPTION=$REPO_DESCRIPTION" >> $GITHUB_ENV
+
+      - name: Authenticate with Docker Hub and get JWT token
+        run: |
+          JWT_TOKEN=$(curl -s -X POST -H "Content-Type: application/json" -d '{"username": "'${{ secrets.DOCKER_USERNAME }}'", "password": "'${{ secrets.DOCKER_ACCESS_TOKEN }}'"}' https://hub.docker.com/v2/users/login/ | jq -r '.token')
+          echo "JWT_TOKEN=$JWT_TOKEN" >> $GITHUB_ENV
+
+      - name: Update Docker Hub README and Description
+        run: |
+          # Prepare the payload for Docker Hub API
+          PAYLOAD=$(jq -n \
+            --arg description "$REPO_DESCRIPTION" \
+            --arg readme "$README_CONTENT" \
+            '{description: $description, full_description: $readme}')
+
+          # Update Docker Hub repository README and Description
+          curl -s -X PATCH \
+            -H "Authorization: JWT $JWT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            https://hub.docker.com/v2/repositories/${{ github.repository }}/
+
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
