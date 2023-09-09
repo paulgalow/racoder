@@ -24,7 +24,7 @@ jobs:
 
       - name: Authenticate with Docker Hub and get JWT token
         run: |
-          JWT_TOKEN=$(curl -s -X POST -H "Content-Type: application/json" -d '{"username": "'${{ secrets.DOCKER_USERNAME }}'", "password": "'${{ secrets.DOCKER_ACCESS_TOKEN }}'"}' https://hub.docker.com/v2/users/login/ | jq -r '.token')
+          JWT_TOKEN=$(curl -s -X POST -H "Content-Type: application/json" -d '{"username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_ACCESS_TOKEN'"}' https://hub.docker.com/v2/users/login/ | jq -r '.token')
           echo "JWT_TOKEN=$JWT_TOKEN" >> $GITHUB_ENV
 
       - name: Update Docker Hub README and Description
