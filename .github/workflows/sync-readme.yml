@@ -20,12 +20,12 @@ jobs:
       - name: Fetch GitHub repository description
         id: repo_description
         run: |
-          REPO_DESCRIPTION=$(curl --fail --silent -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }} | jq -r '.description')
+          REPO_DESCRIPTION=$(curl --fail --silent --show-error -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }} | jq -r '.description')
           echo "REPO_DESCRIPTION=$REPO_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Authenticate with Docker Hub and get JWT token
         run: |
-          JWT_TOKEN=$(curl --fail --silent -X POST -H "Content-Type: application/json" -d '{"username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_ACCESS_TOKEN'"}' https://hub.docker.com/v2/users/login/ | jq -r '.token')
+          JWT_TOKEN=$(curl --fail --silent --show-error -X POST -H "Content-Type: application/json" -d '{"username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_ACCESS_TOKEN'"}' https://hub.docker.com/v2/users/login/ | jq -r '.token')
           echo "JWT_TOKEN=$JWT_TOKEN" >> $GITHUB_ENV
 
       - name: Update Docker Hub README and Description
@@ -37,7 +37,7 @@ jobs:
             '{description: $description, full_description: $readme}')
 
           # Update Docker Hub repository README and Description
-          curl --fail --silent -X PATCH \
+          curl --fail --silent --show-error -X PATCH \
             -H "Authorization: JWT ${{ env.JWT_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD" \
