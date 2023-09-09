@@ -1,0 +1,23 @@
+name: Sync README and description with container repository
+
+on:
+  push:
+    paths:
+      - "README.md"
+  workflow_dispatch: # Enables manual triggering
+
+jobs:
+  sync_metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Sync with Docker Hub
+        shell: bash
+        working-directory: scripts
+        run: ./sync-with-docker-hub.sh
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
