@@ -5,7 +5,7 @@
 [![Docker Image Size (tag)](https://img.shields.io/docker/image-size/paulgalow/racoder/latest)](https://hub.docker.com/r/paulgalow/racoder/tags)
 [![GitHub](https://img.shields.io/github/license/paulgalow/racoder)](https://github.com/paulgalow/racoder/blob/main/LICENSE)
 
-Racoder is a simple Node.js web server using [FFmpeg](https://ffmpeg.org/) to transcode internet radio/video streams to MP3 streams. Supported input stream formats are HLS, MPEG-DASH, RTMP, basically anything FFmpeg can handle.
+Racoder is a simple Node.js web server using [FFmpeg](https://ffmpeg.org/) to transcode internet radio/video streams to HTTP MP3 streams. Supported input stream formats are HLS, MPEG-DASH, RTMP, basically anything FFmpeg can handle.
 
 ## Use cases
 
