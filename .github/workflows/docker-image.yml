@@ -6,6 +6,7 @@ on:
   push:
     tags:
       - "*"
+  workflow_dispatch: # Enables manual triggering
 
 jobs:
   push_to_registries:

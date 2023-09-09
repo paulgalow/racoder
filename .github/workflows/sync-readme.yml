@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "README.md"
+  workflow_dispatch: # Enables manual triggering
 
 jobs:
   sync_metadata:
