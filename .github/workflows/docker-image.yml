@@ -6,9 +6,6 @@ on:
   push:
     tags:
       - "*"
-  pull_request:
-    tags:
-      - "*"
 
 jobs:
   push_to_registries:
@@ -46,7 +43,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            paulgalow/racoder
+            ${{ github.repository }}
             ghcr.io/${{ github.repository }}
           flavor: |
             latest=true
@@ -57,7 +54,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            paulgalow/racoder
+            ${{ github.repository }}
             ghcr.io/${{ github.repository }}
           flavor: |
             latest=false
