@@ -43,7 +43,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker (versioned tags)
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: ${{ (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.tag, 'v')) || (github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/v')) }}
         id: meta_versioned
         uses: docker/metadata-action@v4
         with:
@@ -54,7 +54,7 @@ jobs:
             latest=true
 
       - name: Extract metadata (tags, labels) for Docker (non-versioned tags)
-        if: "!startsWith(github.ref, 'refs/tags/v')"
+        if: ${{ (github.event_name == 'workflow_dispatch' && !startsWith(github.event.inputs.tag, 'v')) || (github.event_name != 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/v')) }}
         id: meta_non_versioned
         uses: docker/metadata-action@v4
         with:
@@ -65,7 +65,7 @@ jobs:
             latest=false
 
       - name: Build and push Docker images (versioned tags)
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: ${{ (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.tag, 'v')) || (github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/v')) }}
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -75,7 +75,7 @@ jobs:
           labels: ${{ steps.meta_versioned.outputs.labels }}
 
       - name: Build and push Docker images (non-versioned tags)
-        if: "!startsWith(github.ref, 'refs/tags/v')"
+        if: ${{ (github.event_name == 'workflow_dispatch' && !startsWith(github.event.inputs.tag, 'v')) || (github.event_name != 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/v')) }}
         uses: docker/build-push-action@v4
         with:
           context: .
