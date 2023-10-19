@@ -45,18 +45,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Extract metadata (tags, labels) for Docker
-      #   id: meta
-      #   uses: docker/metadata-action@v4
-      #   with:
-      #     images: |
-      #       ${{ github.repository }}
-      #       ghcr.io/${{ github.repository }}
-      #     tags: |
-      #       type=ref,event=tag,prefix=v,format=latest   # Apply 'latest' tag for versioned tags
-      #       type=ref,event=tag,prefix=v                 # Apply versioned tag like 'v1.0.0'
-      #       type=ref,event=tag,excludePrefix=v          # Apply non-versioned tag
-
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
