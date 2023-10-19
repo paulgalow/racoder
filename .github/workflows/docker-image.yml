@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'refs/tags/' + github.event.inputs.tag || github.ref }}
 
       - name: Set up QEMU for more CPU architectures
         uses: docker/setup-qemu-action@v2
@@ -42,44 +44,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker (versioned tags)
-        if: ${{ (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.tag, 'v')) || (github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/v')) }}
-        id: meta_versioned
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
             ${{ github.repository }}
             ghcr.io/${{ github.repository }}
-          flavor: |
-            latest=true
+          tags: |
+            type=ref,event=tag,prefix=v,format=latest   # Apply 'latest' tag for versioned tags
+            type=ref,event=tag,prefix=v                 # Apply versioned tag like 'v1.0.0'
+            type=ref,event=tag,excludePrefix=v          # Apply non-versioned tag
+            type=input                                  # Manual input
 
-      - name: Extract metadata (tags, labels) for Docker (non-versioned tags)
-        if: ${{ (github.event_name == 'workflow_dispatch' && !startsWith(github.event.inputs.tag, 'v')) || (github.event_name != 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/v')) }}
-        id: meta_non_versioned
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ${{ github.repository }}
-            ghcr.io/${{ github.repository }}
-          flavor: |
-            latest=false
-
-      - name: Build and push Docker images (versioned tags)
-        if: ${{ (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.tag, 'v')) || (github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/v')) }}
+      - name: Build and push Docker images
         uses: docker/build-push-action@v4
         with:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm
           push: true
-          tags: ${{ steps.meta_versioned.outputs.tags }}
-          labels: ${{ steps.meta_versioned.outputs.labels }}
-
-      - name: Build and push Docker images (non-versioned tags)
-        if: ${{ (github.event_name == 'workflow_dispatch' && !startsWith(github.event.inputs.tag, 'v')) || (github.event_name != 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/v')) }}
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64,linux/arm
-          push: true
-          tags: ${{ steps.meta_non_versioned.outputs.tags }}
-          labels: ${{ steps.meta_non_versioned.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
