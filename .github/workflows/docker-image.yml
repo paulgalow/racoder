@@ -11,6 +11,7 @@ on:
       tags:
         description: "Please specify version tag to build and push"
         required: true
+        type: string
 
 jobs:
   push_to_registries:
