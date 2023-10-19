@@ -23,7 +23,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', github.event.inputs.tag) || github.ref }}
+          ref: ${{ github.event.inputs.tag || github.ref }}
 
       - name: Set up QEMU for more CPU architectures
         uses: docker/setup-qemu-action@v2
