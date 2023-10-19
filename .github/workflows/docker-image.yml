@@ -67,9 +67,8 @@ jobs:
             ${{ github.repository }}
             ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=${{ github.event.inputs.tags || github.ref_name }}
-            type=semver,pattern={{version}},value=${{ github.event.inputs.tags || github.ref_name }}
-            type=semver,pattern={{version}},value=${{ github.event.inputs.tags || github.ref_name }},format=latest
+            type=semver,pattern={{version}}
+            type=semver,pattern={{version}},format=latest
 
       - name: Debug - Print generated tags
         run: 'echo "Generated Tags: ${{ steps.meta.outputs.tags }}"'
