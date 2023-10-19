@@ -55,7 +55,6 @@ jobs:
             type=ref,event=tag,prefix=v,format=latest   # Apply 'latest' tag for versioned tags
             type=ref,event=tag,prefix=v                 # Apply versioned tag like 'v1.0.0'
             type=ref,event=tag,excludePrefix=v          # Apply non-versioned tag
-            type=input                                  # Manual input
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v4
