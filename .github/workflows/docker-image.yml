@@ -56,6 +56,9 @@ jobs:
             type=ref,event=tag,prefix=v                 # Apply versioned tag like 'v1.0.0'
             type=ref,event=tag,excludePrefix=v          # Apply non-versioned tag
 
+      - name: Debug - Print generated tags
+        run: 'echo "Generated Tags: ${{ steps.meta.outputs.tags }}"'
+
       - name: Build and push Docker images
         uses: docker/build-push-action@v4
         with:
