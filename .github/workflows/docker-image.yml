@@ -26,9 +26,6 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tags || github.ref }}
 
-      - name: Debug - Print Current Branch/Tag
-        run: 'echo "Current Branch/Tag: $(git rev-parse --abbrev-ref HEAD)"'
-
       - name: Set up QEMU for more CPU architectures
         uses: docker/setup-qemu-action@v2
 
@@ -71,9 +68,6 @@ jobs:
             type=raw,value=${{ github.event.inputs.tags || github.ref_name }}
             type=semver,pattern={{version}},value=${{ github.event.inputs.tags || github.ref_name }}
             type=semver,pattern={{version}},value=${{ github.event.inputs.tags || github.ref_name }},format=latest
-
-      - name: Debug - Print generated tags
-        run: 'echo "Generated Tags: ${{ steps.meta.outputs.tags }}"'
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v4
