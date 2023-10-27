@@ -36,7 +36,7 @@ Configuration options are set using environment variables.
 
 ## How to deploy
 
-Pre-built Docker images for different architectures are available on [Docker Hub](https://hub.docker.com/repository/docker/paulgalow/racoder/general) and the [GitHub Container Registry](https://github.com/paulgalow/racoder/pkgs/container/racoder/versions?filters%5Bversion_type%5D=tagged). Deploy using Docker Compose on a small home server like a Raspberry Pi or host it (for free) on fly.io.
+Pre-built Docker images for different architectures are available on [Docker Hub](https://hub.docker.com/r/paulgalow/racoder/) and the [GitHub Container Registry](https://github.com/paulgalow/racoder/pkgs/container/racoder/versions?filters%5Bversion_type%5D=tagged). Deploy using Docker Compose on a small home server like a Raspberry Pi or host it (for free) on fly.io.
 
 ### Using Docker Run
 
