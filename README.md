@@ -49,13 +49,13 @@ docker run \
   --cap-drop ALL \
   --name racoder \
   --publish 3000:3000/tcp \
-  --env INPUT_STREAM="https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_radio_four_extra.m3u8" \
+  --env INPUT_STREAM="https://as-hls-ww-live.akamaized.net/pool_904/live/ww/bbc_radio_four_extra/bbc_radio_four_extra.isml/bbc_radio_four_extra-audio%3d96000.norewind.m3u8" \
   paulgalow/racoder:latest
 ```
 
 Racoder will serve its output stream at `http://<hostname>:3000/`. So for this example open `http://localhost:3000/` in your browser or media player of choice (like VLC, QuickTime, …) to listen to the output stream.
 
-Here we are using the [BBC Radio 4 Extra HLS AAC stream](https://en.everybodywiki.com/List_of_BBC_radio_stream_URLs#Digital-only_stations) as input, but it does not have to be an audio HLS stream. Streams using MPEG-DASH are supported as well, as are video HLS/MPEG-DASH streams.
+Here we are using the [BBC Radio 4 Extra HLS AAC stream](https://gist.github.com/bpsib/67089b959e4fa898af69fea59ad74bc3) as input, but it does not have to be an audio HLS stream. Streams using MPEG-DASH are supported as well, as are video HLS/MPEG-DASH streams.
 
 ### Using Docker Compose
 
