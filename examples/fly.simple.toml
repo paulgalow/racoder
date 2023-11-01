@@ -15,5 +15,5 @@
     force_https = false
 
 [env]
-  INPUT_STREAM = "https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_radio_four_extra.m3u8"
+  INPUT_STREAM = "https://as-hls-ww-live.akamaized.net/pool_904/live/ww/bbc_radio_four_extra/bbc_radio_four_extra.isml/bbc_radio_four_extra-audio%3d96000.norewind.m3u8"
   # Output stream will be available at "/"
