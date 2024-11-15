@@ -26,13 +26,13 @@ Racoder is a lightweight Node.js web server that leverages [FFmpeg](https://ffmp
 
 Configuration options are set using environment variables.
 
-| Name         | Description                               | Default value | Example                                                                             |
-| ------------ | ----------------------------------------- | ------------- | ----------------------------------------------------------------------------------- |
-| INPUT_STREAM | ℹ️ Required. URL for incoming stream      | N/A           | `https://artesimulcast.akamaized.net/hls/live/2030993/artelive_de/master_v180.m3u8` |
-| BITRATE      | Transcoding bitrate for output MP3 stream | `128k`        | `320k`                                                                              |
-| LOG_LEVEL    | Level of detail for log output            | `INFO`        | `DEBUG`                                                                             |
-| OUTPUT_PATH  | URL path for output MP3 stream            | `/`           | `/my-station`                                                                       |
-| TZ           | Timezone for log timestamps               | `UTC`         | `Europe/Berlin`                                                                     |
+| Name         | Description                                                                                                                   | Default value | Example                                                                             |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------|---------------|-------------------------------------------------------------------------------------|
+| INPUT_STREAM | ℹ️ Required. URL for incoming stream. Use `|` to separate multiple URLs.                                                       | N/A           | `https://artesimulcast.akamaized.net/hls/live/2030993/artelive_de/master_v180.m3u8` |
+| BITRATE      | Transcoding bitrate for output MP3 stream                                                                                     | `128k`        | `320k`                                                                              |
+| LOG_LEVEL    | Level of detail for log output                                                                                                | `INFO`        | `DEBUG`                                                                             |
+| OUTPUT_PATH  | URL path for output MP3 stream, must contain leading slash. Must be set, if multiple URLs are set and again separated by `|`. | `/`           | `/my-station`                                                                       |
+| TZ           | Timezone for log timestamps                                                                                                   | `UTC`         | `Europe/Berlin`                                                                     |
 
 ## How to deploy
 
@@ -59,10 +59,10 @@ Here we are using the [BBC Radio 4 Extra HLS AAC stream](https://gist.github.com
 
 ### Using Docker Compose
 
-- [Simple Compose file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.simple.yml)
-- [Extended Compose file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.extended.yml)
+- [Simple Compose file example](./examples/docker-compose.simple.yml)
+- [Extended Compose file example](./examples/docker-compose.extended.yml)
 
 ### Using fly.io
 
-- [Simple Fly.io TOML example](https://github.com/paulgalow/racoder/blob/main/examples/fly.simple.toml)
-- [Extended Fly.io TOML example](https://github.com/paulgalow/racoder/blob/main/examples/fly.extended.toml)
+- [Simple Fly.io TOML example](./examples/fly.simple.toml)
+- [Extended Fly.io TOML example](./examples/fly.extended.toml)
