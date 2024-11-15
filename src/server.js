@@ -4,10 +4,26 @@ import { getTimeZone, log, LOG_LEVELS, validateEnv } from "./utils.js";
 
 const { BITRATE, HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = validateEnv();
 
+const INPUT_STREAMS = INPUT_STREAM.split("|");
+const OUTPUT_PATHS = OUTPUT_PATH.split("|");
+
+function trim_trailing_slash(val) {
+    if (val.length > 1 && val[val.length - 1] == "/") {
+        val = val.slice(0, -1);
+    }
+    return val;
+}
+
+var STREAMS = {};
+OUTPUT_PATHS.forEach((element, index) => {
+    STREAMS[element] = trim_trailing_slash(INPUT_STREAMS[index]);
+});
+
 function handleStream(req, res) {
   log(`Incoming request for URL '${req.url}' with method '${req.method}'`);
   log(`Incoming request headers: ${req.rawHeaders}`, LOG_LEVELS.DEBUG);
   res.writeHead(200, { "Content-Type": "audio/mpeg" });
+  const stream_url = STREAMS[trim_trailing_slash(req.url)];
 
   const ffmpegProcess = spawn("ffmpeg", [
     "-nostdin",
@@ -15,7 +31,7 @@ function handleStream(req, res) {
     "warning",
     "-re",
     "-i",
-    INPUT_STREAM,
+    stream_url,
     "-vn",
     "-c:a",
     "libmp3lame",
@@ -87,18 +103,13 @@ function gracefulShutdown(signal) {
 const server = http.createServer(
   { keepAlive: true, keepAliveInitialDelay: 5000 },
   (req, res) => {
-    switch (req.url) {
-      case OUTPUT_PATH:
-      case OUTPUT_PATH + "/":
+    const req_url = trim_trailing_slash(req.url);
+    if (req_url in STREAMS) {
         handleStream(req, res);
-        break;
-      case "/healthcheck":
-      case "/healthcheck/":
+    } else if (req_url == "/healthcheck") {
         handleHealthcheck(req, res);
-        break;
-      default:
+    } else {
         handleNotFound(req, res);
-        break;
     }
   }
 );

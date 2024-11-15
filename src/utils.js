@@ -40,7 +40,7 @@ export function validateEnv() {
   }
 
   try {
-    new URL(process.env.INPUT_STREAM);
+    process.env.INPUT_STREAM.split("|").map(function (val) { new URL(val);});
   } catch (error) {
     throw new Error("'INPUT_STREAM' environment variable is not a valid URL.");
   }
@@ -48,6 +48,11 @@ export function validateEnv() {
   if (process.env.OUTPUT_PATH == null) {
     log("'OUTPUT_PATH' environment variable is not set. Defaulting to '/' …");
     process.env.OUTPUT_PATH = "/";
+  }
+
+  const number_of_urls = process.env.INPUT_STREAM.split("|").length;
+  if (number_of_urls > 1 && number_of_urls != process.env.OUTPUT_PATH.split("|").length) {
+    throw new Error("If multiple urls are specified in 'INPUT_STREAM', 'OUTPUT_PATH' must be set and contain the same number of paths");
   }
 
   if (process.env.BITRATE == null) {
