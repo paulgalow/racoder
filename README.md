@@ -49,7 +49,7 @@ docker run \
   --cap-drop ALL \
   --name racoder \
   --publish 3000:3000/tcp \
-  --env INPUT_STREAM="https://as-hls-ww-live.akamaized.net/pool_904/live/ww/bbc_radio_four_extra/bbc_radio_four_extra.isml/bbc_radio_four_extra-audio%3d96000.norewind.m3u8" \
+  --env INPUT_STREAM="https://as-hls-ww-live.akamaized.net/pool_26173715/live/ww/bbc_radio_four_extra/bbc_radio_four_extra.isml/bbc_radio_four_extra-audio%3d96000.norewind.m3u8" \
   paulgalow/racoder:latest
 ```
 
