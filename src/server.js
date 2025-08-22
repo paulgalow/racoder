@@ -1,14 +1,18 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
-import dotenv from "dotenv";
 import { getTimeZone, log, LOG_LEVELS, validateEnv } from "./utils.js";
 
+import dotenv from "dotenv";
 dotenv.config();
 
 const { BITRATE, HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = validateEnv();
-
+const SHUTDOWN_TIMEOUT = 5000;
 const INPUT_STREAMS = INPUT_STREAM.split("|");
 const OUTPUT_PATHS = OUTPUT_PATH.split("|");
+
+if (INPUT_STREAMS.length !== OUTPUT_PATHS.length) {
+    throw new Error("INPUT_STREAM and OUTPUT_PATH must have the same number of entries.");
+}
 
 function trim_trailing_slash(val) {
     if (val.length > 1 && val[val.length - 1] == "/") {
@@ -22,12 +26,7 @@ OUTPUT_PATHS.forEach((element, index) => {
     STREAMS[element] = trim_trailing_slash(INPUT_STREAMS[index]);
 });
 
-function handleStream(req, res) {
-    log(`Incoming request for URL '${req.url}' with method '${req.method}'`);
-    log(`Incoming request headers: ${req.rawHeaders}`, LOG_LEVELS.DEBUG);
-    res.writeHead(200, { "Content-Type": "audio/mpeg" });
-    const stream_url = STREAMS[trim_trailing_slash(req.url)];
-
+function spawnFFmpeg(stream_url, retries = 3) {
     const ffmpegProcess = spawn("ffmpeg", [
         "-nostdin",
         "-loglevel",
@@ -44,24 +43,32 @@ function handleStream(req, res) {
         "mp3",
         "pipe:1",
     ]);
+
+    ffmpegProcess.on("error", (error) => {
+        if (retries > 0) {
+            log(`Retrying FFmpeg process for URL '${stream_url}' (${retries} retries left)`);
+            setTimeout(() => spawnFFmpeg(stream_url, retries - 1), 1000);
+        } else {
+            log(`FFmpeg process failed for URL '${stream_url}' after retries: ${error}`);
+        }
+    });
+
+    return ffmpegProcess;
+}
+
+function handleStream(req, res) {
+    log(`Incoming request for URL '${req.url}' with method '${req.method}'`);
+    log(`Incoming request headers: ${req.rawHeaders}`, LOG_LEVELS.DEBUG);
+    res.writeHead(200, { "Content-Type": "audio/mpeg" });
+    const stream_url = STREAMS[trim_trailing_slash(req.url)];
+
+    const ffmpegProcess = spawnFFmpeg(stream_url);
     ffmpegProcess.stdout.pipe(res);
 
     log(`Spawned FFmpeg process with PID '${ffmpegProcess.pid}'`);
 
     ffmpegProcess.stderr.on("data", (data) => {
         log(`stdout: ${data}`, LOG_LEVELS.DEBUG);
-    });
-
-    ffmpegProcess.on("data", (error) => {
-        log(
-            `FFmpeg process with PID '${ffmpegProcess.pid} encountered an error: ${error}`
-        );
-    });
-
-    ffmpegProcess.on("error", (error) => {
-        log(
-            `FFmpeg process with PID '${ffmpegProcess.pid} encountered an error: ${error}`
-        );
     });
 
     ffmpegProcess.on("close", (code) => {
@@ -100,7 +107,7 @@ function gracefulShutdown(signal) {
     setTimeout(() => {
         log("Timeout reached. Shutting down server now …");
         process.exit(1);
-    }, 5000);
+    }, SHUTDOWN_TIMEOUT);
 }
 
 const server = http.createServer(
@@ -120,7 +127,11 @@ const server = http.createServer(
 log(`Server timezone: ${getTimeZone()}`);
 server.listen(HTTP_PORT);
 log(`Server listening on TCP port ${HTTP_PORT} …`);
-log(`Stream available at '${OUTPUT_PATH}'`);
+
+OUTPUT_PATHS.forEach((path, index) => {
+    const inputStream = INPUT_STREAMS[index];
+    log(`Stream from '${inputStream}' available at '${path}'`);
+});
 
 process.on("SIGINT", (signal) => gracefulShutdown(signal));
 process.on("SIGTERM", (signal) => gracefulShutdown(signal));
