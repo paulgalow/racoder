@@ -1,0 +1,17 @@
+services:
+    racoder:
+        build: .
+        image: racoder
+        container_name: racoder
+        restart: unless-stopped
+        ports:
+            - "3100:3000/tcp"
+        environment:
+            INPUT_STREAM: "http://playerservices.streamtheworld.com/api/livestream-redirect/KQMVFMAAC.aac|http://playerservices.streamtheworld.com/api/livestream-redirect/KUOWFM_AAC.aac|http://bonneville.cdnstream1.com/2643_48.aac"
+            OUTPUT_PATH: "/fm1|/fm2|/fm3"
+            BITRATE: 128k
+            TZ: America/Los_Angeles
+            LOG_LEVEL: INFO
+        read_only: true
+        cap_drop:
+            - ALL

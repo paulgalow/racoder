@@ -2,16 +2,15 @@ import http from "node:http";
 import { spawn } from "node:child_process";
 import { getTimeZone, log, LOG_LEVELS, validateEnv } from "./utils.js";
 
-import dotenv from "dotenv";
-dotenv.config();
-
 const { BITRATE, HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = validateEnv();
 const SHUTDOWN_TIMEOUT = 5000;
 const INPUT_STREAMS = INPUT_STREAM.split("|");
 const OUTPUT_PATHS = OUTPUT_PATH.split("|");
 
 if (INPUT_STREAMS.length !== OUTPUT_PATHS.length) {
-    throw new Error("INPUT_STREAM and OUTPUT_PATH must have the same number of entries.");
+    throw new Error(
+        "INPUT_STREAM and OUTPUT_PATH must have the same number of entries."
+    );
 }
 
 function trim_trailing_slash(val) {
@@ -46,10 +45,14 @@ function spawnFFmpeg(stream_url, retries = 3) {
 
     ffmpegProcess.on("error", (error) => {
         if (retries > 0) {
-            log(`Retrying FFmpeg process for URL '${stream_url}' (${retries} retries left)`);
+            log(
+                `Retrying FFmpeg process for URL '${stream_url}' (${retries} retries left)`
+            );
             setTimeout(() => spawnFFmpeg(stream_url, retries - 1), 1000);
         } else {
-            log(`FFmpeg process failed for URL '${stream_url}' after retries: ${error}`);
+            log(
+                `FFmpeg process failed for URL '${stream_url}' after retries: ${error}`
+            );
         }
     });
 

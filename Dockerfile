@@ -21,6 +21,8 @@ RUN npm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
+USER node
+
 # Expose port 3000
 EXPOSE $HTTP_PORT
 
