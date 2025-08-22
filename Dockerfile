@@ -1,24 +1,31 @@
-# syntax=docker/dockerfile:1
-
-# See https://gallery.ecr.aws/docker/library/node
-FROM public.ecr.aws/docker/library/node:lts-alpine
+# Use the official Node.js LTS image as the base image
+FROM node:lts
 
 ENV NODE_ENV=production
 ENV HTTP_PORT=3000
 
-# Install FFmpeg and tzdata for time zone support
-RUN apk add --no-cache ffmpeg tzdata && \
-  rm -rf /tmp/* /var/cache/apk/*
-
+# Set the working directory inside the container
 WORKDIR /app
-COPY --chown=node:node package.json .
-COPY --chown=node:node ./src .
 
+# Install ffmpeg and tzdata
+RUN apt-get update && \
+ apt-get install -y ffmpeg tzdata && \
+ rm -rf /var/lib/apt/lists/*
+
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code to the working directory
+COPY . .
+
+# Expose port 3000
 EXPOSE $HTTP_PORT
-
-USER node
 
 HEALTHCHECK \
   CMD wget -S --spider http://localhost:${HTTP_PORT}/healthcheck || exit 1
 
-CMD ["node", "server.js"]
+# Start the application
+CMD ["node", "src/server.js"]
