@@ -1,0 +1,16 @@
+services:
+  racoder:
+    image: paulgalow/racoder:latest
+    container_name: racoder
+    restart: unless-stopped
+    ports:
+      - "3000:3000/tcp"
+    environment:
+      STREAMS_FILE: /config/streams.json
+      TZ: Europe/Berlin
+      LOG_LEVEL: DEBUG
+    volumes:
+      - ./config.simple.json:/config/streams.json:ro
+    read_only: true
+    cap_drop:
+      - ALL

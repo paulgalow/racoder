@@ -1,10 +1,38 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
-import { getTimeZone, log, LOG_LEVELS, validateEnv } from "./utils.js";
+import {
+  getTimeZone,
+  log,
+  LOG_LEVELS,
+  validateEnv,
+  loadConfig,
+} from "./utils.js";
 
-const { BITRATE, HTTP_PORT, INPUT_STREAM, OUTPUT_PATH } = validateEnv();
+validateEnv();
+const config = loadConfig();
 
-function handleStream(req, res) {
+const streamMap = new Map();
+
+if (config) {
+  // Multi-stream mode from config file
+  config.streams.forEach((stream) => {
+    streamMap.set(stream.output, {
+      input: stream.input,
+      bitrate: stream.bitrate,
+    });
+  });
+  log(`Configured ${streamMap.size} stream(s) from config file`);
+} else {
+  // Single-stream mode from environment variables
+  const { BITRATE, INPUT_STREAM, OUTPUT_PATH } = process.env;
+  streamMap.set(OUTPUT_PATH, {
+    input: INPUT_STREAM,
+    bitrate: BITRATE,
+  });
+  log("Running in single-stream mode from environment variables");
+}
+
+function handleStream(req, res, streamConfig) {
   log(`Incoming request for URL '${req.url}' with method '${req.method}'`);
   log(`Incoming request headers: ${req.rawHeaders}`, LOG_LEVELS.DEBUG);
   res.writeHead(200, { "Content-Type": "audio/mpeg" });
@@ -15,12 +43,12 @@ function handleStream(req, res) {
     "warning",
     "-re",
     "-i",
-    INPUT_STREAM,
+    streamConfig.input,
     "-vn",
     "-c:a",
     "libmp3lame",
     "-b:a",
-    BITRATE,
+    streamConfig.bitrate,
     "-f",
     "mp3",
     "pipe:1",
@@ -87,26 +115,35 @@ function gracefulShutdown(signal) {
 const server = http.createServer(
   { keepAlive: true, keepAliveInitialDelay: 5000 },
   (req, res) => {
-    switch (req.url) {
-      case OUTPUT_PATH:
-      case OUTPUT_PATH + "/":
-        handleStream(req, res);
-        break;
-      case "/healthcheck":
-      case "/healthcheck/":
-        handleHealthcheck(req, res);
-        break;
-      default:
-        handleNotFound(req, res);
-        break;
+    const normalizedUrl =
+      req.url.endsWith("/") && req.url.length > 1
+        ? req.url.slice(0, -1)
+        : req.url;
+
+    if (normalizedUrl === "/healthcheck") {
+      handleHealthcheck(req, res);
+      return;
+    }
+
+    const streamConfig = streamMap.get(normalizedUrl);
+
+    if (streamConfig) {
+      handleStream(req, res, streamConfig);
+    } else {
+      handleNotFound(req, res);
     }
   }
 );
 
+const { HTTP_PORT } = process.env;
+
 log(`Server timezone: ${getTimeZone()}`);
 server.listen(HTTP_PORT);
 log(`Server listening on TCP port ${HTTP_PORT} …`);
-log(`Stream available at '${OUTPUT_PATH}'`);
+
+streamMap.forEach((config, path) => {
+  log(`Stream available at '${path}' (bitrate: ${config.bitrate})`);
+});
 
 process.on("SIGINT", (signal) => gracefulShutdown(signal));
 process.on("SIGTERM", (signal) => gracefulShutdown(signal));
