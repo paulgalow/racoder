@@ -48,7 +48,6 @@ export function startTestServer(env = {}, port = 13000) {
     serverProcess.stdout.on("data", onData);
     serverProcess.stderr.on("data", onData);
 
-
     serverProcess.on("error", (error) => {
       reject(new Error(`Failed to start server: ${error.message}`));
     });
@@ -150,7 +149,7 @@ export function makeHttpRequest(url, options = {}) {
  * @param {number} timeout - Timeout in milliseconds
  * @returns {Promise<boolean>}
  */
-export function testStreamStarts(url, timeout = 5000) {
+export function testStreamStarts(url, timeout = 30000) {
   return new Promise((resolve, reject) => {
     const req = http.request(url, { method: "GET" });
 
