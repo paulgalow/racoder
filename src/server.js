@@ -1,17 +1,12 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
-import {
-  getTimeZone,
-  log,
-  LOG_LEVELS,
-  validateEnv,
-  loadConfig,
-} from "./utils.js";
+import { getTimeZone, logger, validateEnv, loadConfig } from "./utils.js";
 
 validateEnv();
 const config = loadConfig();
-
 const streamMap = new Map();
+
+logger.info(`Log level set to '${process.env.LOG_LEVEL}'`);
 
 if (config) {
   // Multi-stream mode from config file
@@ -21,7 +16,7 @@ if (config) {
       bitrate: stream.bitrate,
     });
   });
-  log(`Configured ${streamMap.size} stream(s) from config file`);
+  logger.info(`Configured ${streamMap.size} stream(s) from config file`);
 } else {
   // Single-stream mode from environment variables
   const { BITRATE, INPUT_STREAM, OUTPUT_PATH } = process.env;
@@ -29,12 +24,14 @@ if (config) {
     input: INPUT_STREAM,
     bitrate: BITRATE,
   });
-  log("Running in single-stream mode from environment variables");
+  logger.info("Running in single-stream mode from environment variables");
 }
 
 function handleStream(req, res, streamConfig) {
-  log(`Incoming request for URL '${req.url}' with method '${req.method}'`);
-  log(`Incoming request headers: ${req.rawHeaders}`, LOG_LEVELS.DEBUG);
+  logger.info(
+    `Incoming '${req.method}' request for '${req.url}' from '${req.socket.remoteAddress}'`
+  );
+  logger.debug(`Incoming request headers: ${req.rawHeaders}`);
   res.writeHead(200, { "Content-Type": "audio/mpeg" });
 
   const ffmpegProcess = spawn("ffmpeg", [
@@ -55,59 +52,56 @@ function handleStream(req, res, streamConfig) {
   ]);
   ffmpegProcess.stdout.pipe(res);
 
-  log(`Spawned FFmpeg process with PID '${ffmpegProcess.pid}'`);
+  logger.info(`Spawned FFmpeg process with PID '${ffmpegProcess.pid}'`);
 
   ffmpegProcess.stderr.on("data", (data) => {
-    log(`stdout: ${data}`, LOG_LEVELS.DEBUG);
+    logger.debug(`stdout: ${data}`);
   });
 
   ffmpegProcess.on("data", (error) => {
-    log(
+    logger.error(
       `FFmpeg process with PID '${ffmpegProcess.pid} encountered an error: ${error}`
     );
   });
 
   ffmpegProcess.on("error", (error) => {
-    log(
+    logger.error(
       `FFmpeg process with PID '${ffmpegProcess.pid} encountered an error: ${error}`
     );
   });
 
   ffmpegProcess.on("close", (code) => {
-    log(
+    logger.info(
       `FFmpeg process with PID '${ffmpegProcess.pid}' exited with code ${code}`
     );
     res.end();
   });
 
   req.on("close", () => {
-    log(
-      `Quitting FFmpeg process with PID '${ffmpegProcess.pid}' …`,
-      LOG_LEVELS.DEBUG
-    );
+    logger.debug(`Quitting FFmpeg process with PID '${ffmpegProcess.pid}' …`);
     ffmpegProcess.kill();
   });
 }
 
 function handleHealthcheck(req, res) {
-  log("Healthcheck probed", LOG_LEVELS.DEBUG);
+  logger.debug("Healthcheck probed");
   res.writeHead(200);
   res.end();
 }
 
 function handleNotFound(req, res) {
-  log(`404 Invalid URL: '${req.url}'`);
+  logger.info(`404 Invalid URL: '${req.url}'`);
   res.writeHead(404);
   res.end();
 }
 
 function gracefulShutdown(signal) {
-  log(`${signal} received. Stopping server …`);
+  logger.info(`${signal} received. Stopping server …`);
   server.close(() => {
     process.exit(0);
   });
   setTimeout(() => {
-    log("Timeout reached. Shutting down server now …");
+    logger.info("Timeout reached. Shutting down server now …");
     process.exit(1);
   }, 5000);
 }
@@ -137,12 +131,12 @@ const server = http.createServer(
 
 const { HTTP_PORT } = process.env;
 
-log(`Server timezone: ${getTimeZone()}`);
+logger.info(`Server timezone: ${getTimeZone()}`);
 server.listen(HTTP_PORT);
-log(`Server listening on TCP port ${HTTP_PORT} …`);
+logger.info(`Server listening on TCP port ${HTTP_PORT} …`);
 
 streamMap.forEach((config, path) => {
-  log(`Stream available at '${path}' (bitrate: ${config.bitrate})`);
+  logger.info(`Stream available at '${path}' (bitrate: ${config.bitrate})`);
 });
 
 process.on("SIGINT", (signal) => gracefulShutdown(signal));

@@ -2,13 +2,7 @@ import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { writeFileSync, mkdtempSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import {
-  validateEnv,
-  loadConfig,
-  log,
-  getTimeZone,
-  LOG_LEVELS,
-} from "./utils.js";
+import { validateEnv, loadConfig, logger, getTimeZone } from "./utils.js";
 
 const TEST_DIR_PREFIX = "racoder-test-";
 
@@ -301,14 +295,14 @@ describe("utils.js", () => {
   describe("log", () => {
     it("should handle INFO log level", () => {
       assert.doesNotThrow(() => {
-        log("Info message", LOG_LEVELS.INFO);
+        logger.info("Info message");
       });
     });
 
     it("should handle DEBUG log level", () => {
       process.env.LOG_LEVEL = "DEBUG";
       assert.doesNotThrow(() => {
-        log("Debug message", LOG_LEVELS.DEBUG);
+        logger.debug("Debug message");
       });
     });
   });

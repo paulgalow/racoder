@@ -1,11 +1,15 @@
 import { readFileSync } from "node:fs";
 
 export const LOG_LEVELS = {
-  DEBUG: "DEBUG",
-  INFO: "INFO",
+  DEBUG: 0,
+  INFO: 1,
+  WARN: 2,
+  ERROR: 3,
 };
 
-export function log(message, logLevel = LOG_LEVELS.INFO) {
+const currentLevel = LOG_LEVELS[process.env.LOG_LEVEL] ?? LOG_LEVELS.INFO;
+
+function formatTimestamp() {
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -13,17 +17,31 @@ export function log(message, logLevel = LOG_LEVELS.INFO) {
   const hours = String(now.getHours()).padStart(2, "0");
   const minutes = String(now.getMinutes()).padStart(2, "0");
   const seconds = String(now.getSeconds()).padStart(2, "0");
-  const dateTimeStamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-  if (logLevel === LOG_LEVELS.INFO) {
-    console.log(`${dateTimeStamp} - ${message}`);
-    return;
-  }
-
-  if (logLevel === process.env.LOG_LEVEL) {
-    console.debug(`${dateTimeStamp} - 🪲 ${message}`);
-  }
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+export const logger = {
+  debug: (message) => {
+    if (LOG_LEVELS.DEBUG >= currentLevel) {
+      console.debug(`${formatTimestamp()} - 🪲 ${message}`);
+    }
+  },
+  info: (message) => {
+    if (LOG_LEVELS.INFO >= currentLevel) {
+      console.log(`${formatTimestamp()} - ${message}`);
+    }
+  },
+  warn: (message) => {
+    if (LOG_LEVELS.WARN >= currentLevel) {
+      console.warn(`${formatTimestamp()} - ⚠️ ${message}`);
+    }
+  },
+  error: (message) => {
+    if (LOG_LEVELS.ERROR >= currentLevel) {
+      console.error(`${formatTimestamp()} - ❌ ${message}`);
+    }
+  },
+};
 
 export function getTimeZone() {
   const now = new Date();
@@ -43,7 +61,7 @@ export function loadConfig() {
     const configContent = readFileSync(configPath, "utf-8");
     const config = JSON.parse(configContent);
     validateConfig(config);
-    log(`Loaded configuration from '${configPath}'`);
+    logger.info(`Configuration loaded from '${configPath}'`);
     return config;
   } catch (error) {
     throw new Error(
@@ -107,14 +125,13 @@ export function validateEnv() {
   }
 
   if (process.env.TZ == null) {
-    log("'TZ' environment variable is not set. Defaulting to 'UTC' …");
+    logger.debug("'TZ' environment variable is not set. Defaulting to 'UTC' …");
     process.env.TZ = "UTC";
   }
 
   if (process.env.HTTP_PORT == null) {
-    log(
-      "'HTTP_PORT' environment variable is not set. Setting to '3000' …",
-      LOG_LEVELS.DEBUG
+    logger.debug(
+      "'HTTP_PORT' environment variable is not set. Setting to '3000' …"
     );
     process.env.HTTP_PORT = "3000";
   }
@@ -135,12 +152,12 @@ export function validateEnv() {
   }
 
   if (process.env.OUTPUT_PATH == null) {
-    log("'OUTPUT_PATH' environment variable is not set. Defaulting to '/' …");
+    logger.debug("'OUTPUT_PATH' environment variable is not set. Defaulting to '/' …");
     process.env.OUTPUT_PATH = "/";
   }
 
   if (process.env.BITRATE == null) {
-    log("'BITRATE' environment variable is not set. Defaulting to '128k' …");
+    logger.debug("'BITRATE' environment variable is not set. Defaulting to '128k' …");
     process.env.BITRATE = "128k";
   }
 
