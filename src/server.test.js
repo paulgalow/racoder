@@ -15,6 +15,8 @@ const INPUT_STREAM = "https://example.com/stream1.m3u8";
 
 let testDir;
 
+const getRandomPort = () => BASE_TEST_PORT + Math.floor(Math.random() * 100);
+
 describe("server.js", () => {
   before(() => {
     testDir = mkdtempSync(TEST_DIR_PREFIX);
@@ -25,7 +27,7 @@ describe("server.js", () => {
   });
 
   describe("single stream mode", () => {
-    const TEST_PORT = BASE_TEST_PORT;
+    const TEST_PORT = getRandomPort();
     const BASE_URL = `http://localhost:${TEST_PORT}`;
     let serverProcess;
 
@@ -110,7 +112,7 @@ describe("server.js", () => {
   });
 
   describe("multi-stream mode", () => {
-    const TEST_PORT = BASE_TEST_PORT + 100;
+    const TEST_PORT = getRandomPort() + 100;
     const BASE_URL = `http://localhost:${TEST_PORT}`;
     let serverProcess;
 
@@ -209,7 +211,7 @@ describe("server.js", () => {
   });
 
   describe("graceful shutdown", () => {
-    const TEST_PORT = BASE_TEST_PORT + 200;
+    const TEST_PORT = getRandomPort() + 300;
     const BASE_URL = `http://localhost:${TEST_PORT}`;
 
     it("should handle SIGTERM signal", async () => {
