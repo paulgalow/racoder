@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # See https://gallery.ecr.aws/docker/library/node
-FROM public.ecr.aws/docker/library/node:lts-alpine
+FROM public.ecr.aws/docker/library/node:24-alpine
 
 ENV NODE_ENV=production
 ENV HTTP_PORT=3000

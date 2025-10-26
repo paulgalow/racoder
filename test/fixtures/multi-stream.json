@@ -1,0 +1,21 @@
+{
+  "defaults": {
+    "bitrate": "128k"
+  },
+  "streams": [
+    {
+      "input": "https://example.com/stream1.m3u8",
+      "output": "/stream1"
+    },
+    {
+      "input": "https://example.com/stream2.m3u8",
+      "output": "/stream2",
+      "bitrate": "192k"
+    },
+    {
+      "input": "https://example.com/stream3.m3u8",
+      "output": "/stream3",
+      "bitrate": "256k"
+    }
+  ]
+}

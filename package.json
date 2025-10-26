@@ -5,8 +5,13 @@
   "scripts": {
     "start": "docker compose up",
     "build": "docker compose build",
-    "deploy": "fly deploy"
+    "deploy": "fly deploy",
+    "test": "node --test --experimental-test-coverage --test-concurrency=4 src/**/*.test.js",
+    "test:watch": "node --test --watch src/**/*.test.js"
   },
   "license": "MIT",
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  }
 }

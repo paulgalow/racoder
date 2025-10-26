@@ -1,0 +1,9 @@
+{
+  "streams": [
+    {
+      "input": "https://example.com/test-stream.m3u8",
+      "output": "/test-stream",
+      "bitrate": "128k"
+    }
+  ]
+}

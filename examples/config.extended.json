@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "bitrate": "128k"
+  },
+  "streams": [
+    {
+      "input": "https://as-hls-ww-live.akamaized.net/pool_26173715/live/ww/bbc_radio_four_extra/bbc_radio_four_extra.isml/bbc_radio_four_extra-audio%3d96000.norewind.m3u8",
+      "output": "/bbc-radio-4-extra"
+    },
+    {
+      "input": "https://artesimulcast.akamaized.net/hls/live/2030993/artelive_de/master_v180.m3u8",
+      "output": "/arte-de",
+      "bitrate": "192k"
+    }
+  ]
+}
