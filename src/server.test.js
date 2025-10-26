@@ -9,8 +9,7 @@ import {
   testStreamStarts,
 } from "../test/helpers.js";
 
-const TEST_PORT = 13000;
-const BASE_URL = `http://localhost:${TEST_PORT}`;
+const BASE_TEST_PORT = 13000;
 const TEST_DIR_PREFIX = "racoder-test-";
 const INPUT_STREAM = "https://example.com/stream1.m3u8";
 
@@ -26,6 +25,8 @@ describe("server.js", () => {
   });
 
   describe("single stream mode", () => {
+    const TEST_PORT = BASE_TEST_PORT;
+    const BASE_URL = `http://localhost:${TEST_PORT}`;
     let serverProcess;
 
     afterEach(async () => {
@@ -109,6 +110,8 @@ describe("server.js", () => {
   });
 
   describe("multi-stream mode", () => {
+    const TEST_PORT = BASE_TEST_PORT + 100;
+    const BASE_URL = `http://localhost:${TEST_PORT}`;
     let serverProcess;
 
     afterEach(async () => {
@@ -206,6 +209,9 @@ describe("server.js", () => {
   });
 
   describe("graceful shutdown", () => {
+    const TEST_PORT = BASE_TEST_PORT + 200;
+    const BASE_URL = `http://localhost:${TEST_PORT}`;
+
     it("should handle SIGTERM signal", async () => {
       const { process: serverProcess, getOutput } = await startTestServer(
         {

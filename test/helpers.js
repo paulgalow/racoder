@@ -36,12 +36,17 @@ export function startTestServer(env = {}, port = 13000) {
     const onData = (data) => {
       capturedOutput += data.toString();
       if (capturedOutput.includes(`Server listening on TCP port ${port}`)) {
-        setTimeout(() => {
-          resolve({
-            process: serverProcess,
-            getOutput: () => capturedOutput,
+        waitForServer(`http://localhost:${port}`)
+          .then(() => {
+            resolve({
+              process: serverProcess,
+              getOutput: () => capturedOutput,
+            });
+          })
+          .catch((error) => {
+            serverProcess.kill();
+            reject(error);
           });
-        }, 100);
       }
     };
 
@@ -67,7 +72,7 @@ export function startTestServer(env = {}, port = 13000) {
         serverProcess.kill();
         reject(new Error("Server failed to start within timeout"));
       }
-    }, 5000);
+    }, 10000);
   });
 }
 
