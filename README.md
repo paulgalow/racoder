@@ -24,6 +24,13 @@ Racoder is a lightweight Node.js web server that leverages [FFmpeg](https://ffmp
 
 ## Configuration options
 
+Racoder supports two configuration modes (since v2):
+
+1. **Single-stream mode**: Configure one stream using environment variables
+2. **Multi-stream mode**: Configure multiple streams using a JSON configuration file
+
+### Single-stream mode
+
 Configuration options are set using environment variables.
 
 | Name         | Description                               | Default value | Example                                                                             |
@@ -34,11 +41,60 @@ Configuration options are set using environment variables.
 | OUTPUT_PATH  | URL path for output MP3 stream            | `/`           | `/my-station`                                                                       |
 | TZ           | Timezone for log timestamps               | `UTC`         | `Europe/Berlin`                                                                     |
 
+### Multi-stream mode
+
+To configure multiple streams, create a JSON configuration file and specify its path using the `STREAMS_FILE` environment variable. When `STREAMS_FILE` is set, single-stream environment variables (`INPUT_STREAM`, `OUTPUT_PATH`, `BITRATE`) are ignored.
+
+#### Configuration file structure
+
+```json
+{
+  "defaults": {
+    "bitrate": "128k"
+  },
+  "streams": [
+    {
+      "input": "https://example.com/stream1.m3u8",
+      "output": "/stream1"
+    },
+    {
+      "input": "https://example.com/stream2.m3u8",
+      "output": "/stream2",
+      "bitrate": "192k"
+    }
+  ]
+}
+```
+
+**Configuration file options:**
+
+- `defaults` (optional): Default values applied to all streams
+  - `bitrate`: Default bitrate for streams that don't specify one
+- `streams` (required): Array of stream configurations
+  - `input` (required): URL for the incoming stream
+  - `output` (required): URL path for the output MP3 stream (must start with `/`)
+  - `bitrate` (optional): Transcoding bitrate for this specific stream (overrides default)
+
+**Environment variables for multi-stream mode:**
+
+| Name         | Description                             | Default value | Example                |
+| ------------ | --------------------------------------- | ------------- | ---------------------- |
+| STREAMS_FILE | ℹ️ Required. Path to configuration file | N/A           | `/config/streams.json` |
+| LOG_LEVEL    | Level of detail for log output          | `INFO`        | `DEBUG`                |
+| TZ           | Timezone for log timestamps             | `UTC`         | `Europe/Berlin`        |
+
+**Examples:**
+
+- [Simple multi-stream config](https://github.com/paulgalow/racoder/blob/main/examples/config.simple.json)
+- [Extended multi-stream config with defaults](https://github.com/paulgalow/racoder/blob/main/examples/config.extended.json)
+
 ## How to deploy
 
 Pre-built Docker images for different architectures are available on [Docker Hub](https://hub.docker.com/r/paulgalow/racoder/) and the [GitHub Container Registry](https://github.com/paulgalow/racoder/pkgs/container/racoder/versions?filters%5Bversion_type%5D=tagged). Deploy using Docker Compose on a small home server like a Raspberry Pi or host it (for free) on fly.io.
 
 ### Using Docker Run
+
+#### Single-stream mode
 
 Let's use a simple example and deploy an instance on our local client machine:
 
@@ -57,10 +113,56 @@ Racoder will serve its output stream at `http://<hostname>:3000/`. So for this e
 
 Here we are using the [BBC Radio 4 Extra HLS AAC stream](https://gist.github.com/bpsib/67089b959e4fa898af69fea59ad74bc3) as input, but it does not have to be an audio HLS stream. Streams using MPEG-DASH are supported as well, as are video HLS/MPEG-DASH streams.
 
+#### Multi-stream mode
+
+To run multiple streams, create a configuration file (e.g., `config.json`) and mount it into the container:
+
+```sh
+docker run \
+  --rm \
+  --read-only \
+  --cap-drop ALL \
+  --name racoder \
+  --publish 3000:3000/tcp \
+  --env STREAMS_FILE="/config/streams.json" \
+  --volume "$(pwd)/config.json:/config/streams.json:ro" \
+  paulgalow/racoder:latest
+```
+
+With a config file like this:
+
+```json
+{
+  "streams": [
+    {
+      "input": "https://as-hls-ww-live.akamaized.net/pool_26173715/live/ww/bbc_radio_four_extra/bbc_radio_four_extra.isml/bbc_radio_four_extra-audio%3d96000.norewind.m3u8",
+      "output": "/bbc-radio-4-extra",
+      "bitrate": "128k"
+    },
+    {
+      "input": "https://artesimulcast.akamaized.net/hls/live/2030993/artelive_de/master_v180.m3u8",
+      "output": "/arte-de",
+      "bitrate": "192k"
+    }
+  ]
+}
+```
+
+Streams will be available at:
+
+- `http://localhost:3000/bbc-radio-4-extra`
+- `http://localhost:3000/arte-de`
+
 ### Using Docker Compose
+
+#### Single-stream mode
 
 - [Simple Compose file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.simple.yml)
 - [Extended Compose file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.extended.yml)
+
+#### Multi-stream mode
+
+- [Multi-stream Compose file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.multi-stream.yml)
 
 ### Using fly.io
 
