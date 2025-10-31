@@ -155,16 +155,10 @@ Streams will be available at:
 
 ### Using Docker Compose
 
-#### Single-stream mode
-
-- [Simple Compose file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.simple.yml)
-- [Extended Compose file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.extended.yml)
-
-#### Multi-stream mode
-
-- [Multi-stream Compose file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.multi-stream.yml)
+- [Single-stream file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.single-stream.yml)
+- [Multi-stream file example](https://github.com/paulgalow/racoder/blob/main/examples/docker-compose.multi-stream.yml)
 
 ### Using fly.io
 
-- [Simple Fly.io TOML example](https://github.com/paulgalow/racoder/blob/main/examples/fly.simple.toml)
-- [Extended Fly.io TOML example](https://github.com/paulgalow/racoder/blob/main/examples/fly.extended.toml)
+- [Single-stream simple TOML example](https://github.com/paulgalow/racoder/blob/main/examples/fly.single-stream.simple.toml)
+- [Single-stream extended TOML example](https://github.com/paulgalow/racoder/blob/main/examples/fly.single-stream.extended.toml)
