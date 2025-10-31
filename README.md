@@ -35,7 +35,7 @@ Configuration options are set using environment variables.
 
 | Name         | Description                               | Default value | Example                                                                             |
 | ------------ | ----------------------------------------- | ------------- | ----------------------------------------------------------------------------------- |
-| INPUT_STREAM | ℹ️ Required. URL for incoming stream      | N/A           | `https://artesimulcast.akamaized.net/hls/live/2030993/artelive_de/master_v180.m3u8` |
+| INPUT_STREAM | **Required**. URL for incoming stream     | N/A           | `https://artesimulcast.akamaized.net/hls/live/2030993/artelive_de/master_v180.m3u8` |
 | BITRATE      | Transcoding bitrate for output MP3 stream | `128k`        | `320k`                                                                              |
 | LOG_LEVEL    | Level of detail for log output            | `INFO`        | `DEBUG`                                                                             |
 | OUTPUT_PATH  | URL path for output MP3 stream            | `/`           | `/my-station`                                                                       |
@@ -44,6 +44,8 @@ Configuration options are set using environment variables.
 ### Multi-stream mode
 
 To configure multiple streams, create a JSON configuration file and specify its path using the `STREAMS_FILE` environment variable. When `STREAMS_FILE` is set, single-stream environment variables (`INPUT_STREAM`, `OUTPUT_PATH`, `BITRATE`) are ignored.
+
+Multi-stream mode requires Racoder v2.0 or later
 
 #### Configuration file structure
 
@@ -91,6 +93,8 @@ To configure multiple streams, create a JSON configuration file and specify its 
 ## How to deploy
 
 Pre-built Docker images for different architectures are available on [Docker Hub](https://hub.docker.com/r/paulgalow/racoder/) and the [GitHub Container Registry](https://github.com/paulgalow/racoder/pkgs/container/racoder/versions?filters%5Bversion_type%5D=tagged). Deploy using Docker Compose on a small home server like a Raspberry Pi or host it (for free) on fly.io.
+
+**Security Note**: Examples use `--read-only` and `--cap-drop ALL` to run the container with minimal privileges. These are recommended for production deployments.
 
 ### Using Docker Run
 
@@ -162,3 +166,19 @@ Streams will be available at:
 
 - [Single-stream simple TOML example](https://github.com/paulgalow/racoder/blob/main/examples/fly.single-stream.simple.toml)
 - [Single-stream extended TOML example](https://github.com/paulgalow/racoder/blob/main/examples/fly.single-stream.extended.toml)
+
+## Monitoring
+
+Racoder provides a `/healthcheck` endpoint that returns HTTP 200 when the server is running. This can be used for container health checks and load balancer configuration.
+
+## Troubleshooting
+
+### Debugging
+
+Set `LOG_LEVEL=DEBUG` to see detailed FFmpeg output and stream processing information.
+
+### Common issues
+
+- **Stream not starting**: Verify the INPUT_STREAM URL is accessible from the container
+- **High memory usage**: Each active client spawns a separate FFmpeg process (~20MB per stream)
+- **Connection errors**: Ensure port 3000 is accessible and not blocked by firewalls
