@@ -181,6 +181,7 @@ describe("server.js", () => {
     });
 
     it("should apply default bitrate from config", async () => {
+      // Given
       const configPath = join(testDir, "defaults-config.json");
       const config = {
         defaults: {
@@ -196,6 +197,7 @@ describe("server.js", () => {
 
       writeFileSync(configPath, JSON.stringify(config));
 
+      // When
       const server = await startTestServer(
         {
           STREAMS_FILE: configPath,
@@ -204,8 +206,9 @@ describe("server.js", () => {
       );
       serverProcess = server.process;
 
-      // Verify server started successfully
       const response = await makeHttpRequest(`${BASE_URL}/healthcheck`);
+
+      // Then
       assert.equal(response.statusCode, 200);
     });
   });
@@ -224,11 +227,9 @@ describe("server.js", () => {
         TEST_PORT
       );
 
-      // Verify server is running
       const response = await makeHttpRequest(`${BASE_URL}/healthcheck`);
       assert.equal(response.statusCode, 200);
 
-      // Send SIGTERM
       const exitCode = await new Promise((resolve) => {
         serverProcess.on("exit", (code) => {
           resolve(code);
@@ -252,7 +253,6 @@ describe("server.js", () => {
         TEST_PORT
       );
 
-      // Verify server is running
       const response = await makeHttpRequest(`${BASE_URL}/healthcheck`);
       assert.equal(response.statusCode, 200);
 
