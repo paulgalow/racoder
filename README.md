@@ -81,7 +81,7 @@ Multi-stream mode requires Racoder v2.0 or later
 
 | Name         | Description                             | Default value | Example                |
 | ------------ | --------------------------------------- | ------------- | ---------------------- |
-| STREAMS_FILE | ℹ️ Required. Path to configuration file | N/A           | `/config/streams.json` |
+| STREAMS_FILE | **Required**. Path to configuration file | N/A           | `/config/streams.json` |
 | LOG_LEVEL    | Level of detail for log output          | `INFO`        | `DEBUG`                |
 | TZ           | Timezone for log timestamps             | `UTC`         | `Europe/Berlin`        |
 
