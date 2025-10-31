@@ -119,7 +119,7 @@ Here we are using the [BBC Radio 4 Extra HLS AAC stream](https://gist.github.com
 
 #### Multi-stream mode
 
-To run multiple streams, create a configuration file (e.g., `config.json`) and mount it into the container:
+To run multiple streams, create a streams configuration file (e.g., `streams.json`) and mount it into the container:
 
 ```sh
 docker run \
@@ -129,11 +129,11 @@ docker run \
   --name racoder \
   --publish 3000:3000/tcp \
   --env STREAMS_FILE="/config/streams.json" \
-  --volume "$(pwd)/config.json:/config/streams.json:ro" \
+  --volume "$(pwd)/streams.json:/config/streams.json:ro" \
   paulgalow/racoder:latest
 ```
 
-With a config file like this:
+With a streams file like this:
 
 ```json
 {
