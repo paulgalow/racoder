@@ -27,7 +27,7 @@ Racoder is a lightweight Node.js web server that leverages [FFmpeg](https://ffmp
 Racoder supports two configuration modes (since v2):
 
 1. **Single-stream mode**: Configure one stream using environment variables
-2. **Multi-stream mode**: Configure multiple streams using a JSON configuration file
+2. **Multi-stream mode**: Configure multiple streams using a streams JSON file
 
 ### Single-stream mode
 
@@ -43,11 +43,11 @@ Configuration options are set using environment variables.
 
 ### Multi-stream mode
 
-To configure multiple streams, create a JSON configuration file and specify its path using the `STREAMS_FILE` environment variable. When `STREAMS_FILE` is set, single-stream environment variables (`INPUT_STREAM`, `OUTPUT_PATH`, `BITRATE`) are ignored.
+To configure multiple streams, create a streams JSON file and specify its path using the `STREAMS_FILE` environment variable. When `STREAMS_FILE` is set, single-stream environment variables (`INPUT_STREAM`, `OUTPUT_PATH`, `BITRATE`) are ignored.
 
 Multi-stream mode requires Racoder v2.0 or later
 
-#### Configuration file structure
+#### Streams file structure
 
 ```json
 {
@@ -68,7 +68,7 @@ Multi-stream mode requires Racoder v2.0 or later
 }
 ```
 
-**Configuration file options:**
+**Streams file options:**
 
 - `defaults` (optional): Default values applied to all streams
   - `bitrate`: Default bitrate for streams that don't specify one
@@ -81,7 +81,7 @@ Multi-stream mode requires Racoder v2.0 or later
 
 | Name         | Description                             | Default value | Example                |
 | ------------ | --------------------------------------- | ------------- | ---------------------- |
-| STREAMS_FILE | **Required**. Path to configuration file | N/A           | `/config/streams.json` |
+| STREAMS_FILE | **Required**. Path to streams JSON file | N/A           | `/config/streams.json` |
 | LOG_LEVEL    | Level of detail for log output          | `INFO`        | `DEBUG`                |
 | TZ           | Timezone for log timestamps             | `UTC`         | `Europe/Berlin`        |
 
@@ -119,7 +119,7 @@ Here we are using the [BBC Radio 4 Extra HLS AAC stream](https://gist.github.com
 
 #### Multi-stream mode
 
-To run multiple streams, create a streams configuration file (e.g., `streams.json`) and mount it into the container:
+To run multiple streams, create a streams file (e.g., `streams.json`) and mount it into the container:
 
 ```sh
 docker run \
